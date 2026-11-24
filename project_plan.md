@@ -2,9 +2,11 @@
 
 Draft for discussion with the supervisor (Prof. Hlavacs). Last updated: 24 November 2026.
 
-> The earlier version of this plan (rebuild DLSS 5-style kernels in Vulkan and check them against the OpenDLSS-NR
-> model) is kept in the git history of this repository. [architecture.md](architecture.md) still describes that
-> research and is now background reading.
+> This plan lives in my fork of the supervisor's engine,
+> [mahdyfalah/Vienna-WebGPU-Engine](https://github.com/mahdyfalah/Vienna-WebGPU-Engine), where all runtime work
+> happens. It replaces an earlier plan (rebuild DLSS 5-style kernels in Vulkan and check them against the
+> OpenDLSS-NR model), which is kept in [mahdyfalah/VulkanNR](https://github.com/mahdyfalah/VulkanNR) together with
+> the background research on that topic.
 
 ## 1. Summary
 
@@ -22,7 +24,13 @@ devices?
 
 ## 2. Instructor feedback this plan answers
 
-From [notes.md](notes.md) and the last meeting:
+Notes from the last meeting with the supervisor:
+
+- The model can be trained on real photographs (focus on people's faces).
+- Try to improve a face that exists but is not realistic, or try to complete a face (empty head).
+- Get familiar with every link and describe the architecture.
+- Research and decide between WebGPU and Vulkan; the Vienna-WebGPU-Engine may be extended.
+- Train my own models and weights, using publicly available data.
 
 | Feedback | How the plan answers it |
 | --- | --- |
@@ -69,8 +77,8 @@ face region, so Tensor Cores are not required to reach real-time speed. Training
 WebGPU only needs to run inference.
 
 **Optional comparison (milestone 7):** run the same network as SPIR-V on Vulkan with cooperative matrices on the
-RTX 4070 Ti, to measure how much speed WebGPU gives up. The Vulkan work already done in this repository
-([src/main.cpp](../src/main.cpp), [vector_add.comp](../shaders/vector_add.comp)) is reused for that.
+RTX 4070 Ti, to measure how much speed WebGPU gives up. The Vulkan compute template already written in
+[mahdyfalah/VulkanNR](https://github.com/mahdyfalah/VulkanNR) is reused for that.
 
 ## 5. Goals
 
@@ -181,7 +189,7 @@ flowchart LR
 - Demo: a head mesh without a texture gets a plausible skin and face appearance at runtime.
 - Risk: this is generative and much harder to evaluate. It is only done if Tracks A and B work.
 
-### 6.6 Python tooling (new folder `training/` in this repository)
+### 6.6 Python tooling (new folder `training/` in this repository, next to the engine code)
 
 - `data/`: dataset download scripts, face fitting, Blender render scripts, train/validation/test split.
 - `models/`: PyTorch definitions of the Track A and Track B networks.
@@ -277,7 +285,7 @@ done. Example images in the thesis come from datasets whose licence allows it, o
 | Training | Python 3.11, PyTorch, torchvision, NumPy |
 | Data | Blender (Cycles) with Python scripts, DECA/EMOCA + FLAME, a face-parsing network |
 | Evaluation | `lpips`, `torchmetrics` (PSNR, SSIM, FID, KID), NVIDIA FLIP, an ArcFace model for identity |
-| Optional comparison | Vulkan 1.3 + `VK_KHR_cooperative_matrix` (code in this repository) |
+| Optional comparison | Vulkan 1.3 + `VK_KHR_cooperative_matrix` (code in [mahdyfalah/VulkanNR](https://github.com/mahdyfalah/VulkanNR)) |
 | Hardware | RTX 4070 Ti (Windows), handheld gaming PC (Linux), Mac |
 | Versioning | Git/GitHub; datasets and large weights are kept out of git |
 
@@ -285,7 +293,7 @@ done. Example images in the thesis come from datasets whose licence allows it, o
 
 | # | Milestone | Content | Deliverable | Dates | Status |
 | --- | --- | --- | --- | --- | --- |
-| 0 | First research phase | Repository and Vulkan compute template; study of DLSS-style neural rendering and OpenDLSS-NR | This repository, [architecture.md](architecture.md) | Oct – Nov 2026 | Done |
+| 0 | First research phase | Repository and Vulkan compute template; study of DLSS-style neural rendering and OpenDLSS-NR | [mahdyfalah/VulkanNR](https://github.com/mahdyfalah/VulkanNR) (template and architecture notes) | Oct – Nov 2026 | Done |
 | 1 | Related work and decisions | Study all supervisor links and describe their architectures (section 3); WebGPU vs. Vulkan decision (section 4); this plan approved | Approved plan | Until mid-Dec 2026 | In progress |
 | 2 | Engine setup | Fork built and running (Tutorial done); build `main_demo`; `examples/neural_face` with a head and ImGui; GPU timing; screenshot and G-buffer capture | Face scene running with timing | Dec 2026 – early Jan 2027 | Fork built and running |
 | 3 | Inference basics | Weight file format and loader; WGSL dense and conv layers; correctness tests against PyTorch (8.1) | All layer tests pass | January 2027 | To do |
@@ -326,6 +334,6 @@ early.
 
 | Repository | Purpose |
 | --- | --- |
-| [mahdyfalah/VulkanNR](https://github.com/mahdyfalah/VulkanNR) (this repository, local: `thesis/VulkanNR`) | Plan, notes, Vulkan comparison code, later the Python `training/` folder |
-| [mahdyfalah/Vienna-WebGPU-Engine](https://github.com/mahdyfalah/Vienna-WebGPU-Engine) (local: `thesis/Vienna-WebGPU-Engine`) | Fork of the supervisor's engine; all runtime work |
+| [mahdyfalah/Vienna-WebGPU-Engine](https://github.com/mahdyfalah/Vienna-WebGPU-Engine) (this repository, local: `thesis/Vienna-WebGPU-Engine`) | Fork of the supervisor's engine; this plan, all runtime work and the Python `training/` folder. `upstream` points to [hlavacs/Vienna-WebGPU-Engine](https://github.com/hlavacs/Vienna-WebGPU-Engine) |
+| [mahdyfalah/VulkanNR](https://github.com/mahdyfalah/VulkanNR) (local: `thesis/VulkanNR`) | Earlier Vulkan plan, DLSS architecture notes, Vulkan compute template for the optional comparison (S2) |
 | [OpenDLSS-NR](https://github.com/maanHimself/OpenDLSS-NR) (local: `thesis/OpenDLSS-NR`) | Background reading only |
